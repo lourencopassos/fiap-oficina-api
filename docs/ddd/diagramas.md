@@ -1,8 +1,8 @@
 # Diagramas: Oficina Mecânica
 
-Diagramas da solução entregue, em [Mermaid](https://mermaid.js.org/), que o GitHub renderiza direto. Servem de **modelo para redesenhar no Miro**. A exportação em PDF fica em [diagramas.pdf](diagramas.pdf).
+Diagramas da solução entregue, em [Mermaid](https://mermaid.js.org/), que o GitHub renderiza direto. Os mesmos diagramas estão no [board do FigJam](https://www.figma.com/board/OSi3ythINp208qJgHLLyOh), à direita dos fluxos de Event Storming. A exportação em PDF fica em [diagramas.pdf](diagramas.pdf).
 
-> Para exportar sem redesenhar: cole o bloco no [Mermaid Live Editor](https://mermaid.live) e use *Actions → PNG/SVG*. Ou, no Miro, use *Apps → Mermaid* (ou *Diagramming → Import → Mermaid*) e cole o código.
+> Para exportar sem redesenhar: cole o bloco no [Mermaid Live Editor](https://mermaid.live) e use *Actions → PNG/SVG*. O diagrama de classes (seção 3) aparece no FigJam como flowchart de agregados, porque o FigJam não importa diagramas de classe.
 
 | # | Diagrama | Para que serve |
 |---|---|---|

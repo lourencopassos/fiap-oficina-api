@@ -1,35 +1,34 @@
 # Event Storming: Oficina Mecânica
 
-Este documento é o **modelo do board do Miro**. Cada bloco colorido abaixo corresponde a um post-it. Os três fluxos pedidos no Tech Challenge estão aqui na ordem da linha do tempo, da esquerda para a direita, e **foram levantados a partir do código entregue**: todo evento, comando, política e read model tem um arquivo correspondente, indicado nas tabelas.
+Este documento é a versão em texto do **board de Event Storming no FigJam**. Cada bloco colorido abaixo corresponde a um post-it. Os três fluxos pedidos no Tech Challenge estão aqui na ordem da linha do tempo, da esquerda para a direita, e **foram levantados a partir do código entregue**: todo evento, comando, política e read model tem um arquivo correspondente, indicado nas tabelas.
 
-> Board no Miro: _`<inserir link do Miro>`_. Exportação em PDF: [event-storming.pdf](event-storming.pdf)
+> **Board no FigJam:** <https://www.figma.com/board/OSi3ythINp208qJgHLLyOh>. Ele tem a legenda, os 3 fluxos em post-its e os diagramas. Exportação em PDF: [event-storming.pdf](event-storming.pdf)
 
 ---
 
-## Como montar o board no Miro
+## Como o board está montado
 
 ### Legenda (cores padrão do Event Storming)
 
-| Post-it | Cor no Miro | Significado | Como escrever |
+| Post-it | Cor no board | Significado | Como escrever |
 |---|---|---|---|
 | 🟧 **Evento de domínio** | Laranja | Algo relevante que **aconteceu** no negócio | Verbo no **particípio**: *OS Aberta*, *Orçamento Aprovado* |
-| 🟧 **Fato registrado** (borda tracejada) | Laranja, borda tracejada | Fato de negócio que o sistema **grava**, mas que não é publicado como evento no código | Igual ao evento |
+| 🟧 **Fato registrado** | Laranja, com "(fato registrado)" no texto (borda tracejada nos diagramas abaixo) | Fato de negócio que o sistema **grava**, mas que não é publicado como evento no código | Igual ao evento |
 | 🟦 **Comando** | Azul | Intenção / decisão de um ator que dispara o evento | Verbo no **imperativo**: *Abrir OS*, *Enviar Orçamento* |
 | 🟨 **Agregado** | Amarelo | Quem recebe o comando e garante as regras | Substantivo: *OrdemServico*, *Peca* |
 | 🟪 **Política** | Lilás | Reação automática: "**quando** X, **então** Y" | *Quando orçamento enviado, então notificar cliente* |
 | 🟩 **Read model** | Verde | Informação que o ator consulta para decidir | *Catálogo de serviços*, *Acompanhamento da OS* |
-| 🟡 **Ator** | Amarelo claro (pequeno) | Quem executa o comando | *Atendente*, *Mecânico*, *Cliente* |
+| 🟡 **Ator** | Branco no FigJam (amarelo claro pequeno no padrão clássico) | Quem executa o comando | *Atendente*, *Mecânico*, *Cliente* |
 | 🩷 **Sistema externo** | Rosa | Algo fora do domínio | *Notificador (e-mail/SMS)* |
 | 🟥 **Hotspot** | Vermelho / rosa forte | Dúvida, risco, regra polêmica ou decisão tomada | *Peça não reserva estoque ao ser incluída* |
 
-### Layout sugerido do board
+### Layout do board
 
-1. **Um frame por fluxo**: *Criação da OS*, *Acompanhamento da OS*, *Gestão de peças e insumos*. Dentro de cada frame, a linha do tempo corre da esquerda para a direita.
-2. **Linha de cima, eventos:** cole primeiro **todos os eventos laranja** em ordem cronológica. É o "big picture".
-3. **Embaixo de cada evento, a "receita"** em colunas: Ator 🟡 → Read model 🟩 → Comando 🟦 → Agregado 🟨 → **Evento 🟧** → Política 🟪.
-4. **Hotspots 🟥** grudados no ponto do fluxo a que se referem.
-5. **Frame final** com o mapa de *Bounded Contexts*: agrupe os agregados pelas cores de contexto (veja [diagramas.md](diagramas.md)).
-6. Exporte: *Frame → ⋯ → Export → PDF*, salvando como `docs/ddd/event-storming.pdf`.
+1. **Uma seção por fluxo**: *Criação da OS*, *Acompanhamento da OS*, *Gestão de peças e insumos*. Dentro de cada seção, a linha do tempo corre da esquerda para a direita, com um passo por coluna.
+2. **Cada coluna é a "receita" de um passo**, de cima para baixo: Ator 🟡 → Read model 🟩 → Comando 🟦 → Agregado 🟨 → **Evento 🟧** → Política 🟪 → Sistema externo 🩷.
+3. **Hotspots 🟥** ficam embaixo da coluna a que se referem.
+4. **À direita, os diagramas:** mapa de contextos, agregados, máquina de estados, sequência da aprovação, modelo de dados e camadas (veja [diagramas.md](diagramas.md)).
+5. Para exportar: selecione as seções e use *⋯ → Export → PDF*, salvando como `docs/ddd/event-storming.pdf` (fluxos) e `docs/ddd/diagramas.pdf` (diagramas).
 
 ```mermaid
 flowchart LR

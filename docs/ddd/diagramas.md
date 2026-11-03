@@ -1,8 +1,8 @@
 # Diagramas: Oficina Mecânica
 
-Diagramas da solução entregue, em [Mermaid](https://mermaid.js.org/), que o GitHub renderiza direto. Servem de **modelo para redesenhar no Miro**. A exportação em PDF fica em [diagramas.pdf](diagramas.pdf).
+Diagramas da solução entregue, em [Mermaid](https://mermaid.js.org/), que o GitHub renderiza direto. Os mesmos diagramas estão no [board do FigJam](https://www.figma.com/board/OSi3ythINp208qJgHLLyOh), à direita dos fluxos de Event Storming. A exportação em PDF fica em [diagramas.pdf](diagramas.pdf) (os 6 diagramas, um por página) e cada diagrama também está avulso em [diagramas/](diagramas/), indicado no início de cada seção.
 
-> Para exportar sem redesenhar: cole o bloco no [Mermaid Live Editor](https://mermaid.live) e use *Actions → PNG/SVG*. Ou, no Miro, use *Apps → Mermaid* (ou *Diagramming → Import → Mermaid*) e cole o código.
+> Para exportar sem redesenhar: cole o bloco no [Mermaid Live Editor](https://mermaid.live) e use *Actions → PNG/SVG*. O diagrama de classes (seção 3) aparece no FigJam como flowchart de agregados, porque o FigJam não importa diagramas de classe.
 
 | # | Diagrama | Para que serve |
 |---|---|---|
@@ -16,6 +16,8 @@ Diagramas da solução entregue, em [Mermaid](https://mermaid.js.org/), que o Gi
 ---
 
 ## 1. Arquitetura em camadas (monólito modular)
+
+PDF (FigJam): [diagramas/01-arquitetura-em-camadas.pdf](diagramas/01-arquitetura-em-camadas.pdf)
 
 Cada bounded context é um módulo NestJS com as mesmas quatro camadas. As dependências apontam **para o domínio**, que não conhece framework nem ORM.
 
@@ -57,6 +59,8 @@ flowchart TB
 ---
 
 ## 2. Mapa de contextos (bounded contexts)
+
+PDF (FigJam): [diagramas/02-mapa-de-contextos.pdf](diagramas/02-mapa-de-contextos.pdf)
 
 ```mermaid
 flowchart LR
@@ -103,6 +107,8 @@ flowchart LR
 ---
 
 ## 3. Modelo de domínio: agregados, entidades e objetos de valor
+
+PDF (FigJam): [diagramas/03-agregados.pdf](diagramas/03-agregados.pdf)
 
 ```mermaid
 classDiagram
@@ -240,6 +246,8 @@ classDiagram
 
 ## 4. Máquina de estados da Ordem de Serviço
 
+PDF (FigJam): [diagramas/04-maquina-de-estados.pdf](diagramas/04-maquina-de-estados.pdf)
+
 ```mermaid
 stateDiagram-v2
   direction LR
@@ -273,6 +281,8 @@ Qualquer outra transição é recusada com `TransicaoStatusInvalidaError` (HTTP 
 ---
 
 ## 5. Sequência: aprovação do orçamento (transação e eventos)
+
+PDF (FigJam): [diagramas/05-sequencia-aprovacao-orcamento.pdf](diagramas/05-sequencia-aprovacao-orcamento.pdf)
 
 O fluxo mais sensível: a mudança de status e a baixa de estoque precisam ser **atômicas**, e o cliente só é notificado **depois do commit**.
 
@@ -321,6 +331,8 @@ Testes que comprovam esse comportamento (`test/e2e/oficina.e2e-spec.ts`):
 ---
 
 ## 6. Modelo de dados (PostgreSQL)
+
+PDF (FigJam): [diagramas/06-modelo-de-dados.pdf](diagramas/06-modelo-de-dados.pdf)
 
 ```mermaid
 erDiagram

@@ -1,0 +1,104 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  qualidade:
+    name: Lint, build e testes unitários (cobertura)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx prisma generate
+      - run: npm run lint
+      - run: npm run build
+      - name: Testes unitários + gate de cobertura (>= 80%)
+        run: npm run test:cov
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cobertura
+          path: coverage/
+
+  integracao:
+    name: Testes de integração (PostgreSQL)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: oficina_test
+          POSTGRES_USER: oficina
+          POSTGRES_PASSWORD: oficina
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U oficina -d oficina_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      E2E_DATABASE_URL: postgresql://oficina:oficina@localhost:5432/oficina_test?schema=public
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx prisma generate
+      - run: npm run test:e2e
+
+  seguranca:
+    name: Análise de vulnerabilidades
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: npm audit (falha em high/critical)
+        run: npm audit --audit-level=high
+      - name: Relatório npm audit
+        if: always()
+        run: npm run audit:report
+      - name: Trivy - dependências, segredos e configurações (fs)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          scanners: vuln,secret,misconfig
+          severity: HIGH,CRITICAL
+          format: table
+          output: trivy-fs.txt
+          exit-code: '1'
+          ignore-unfixed: true
+      - name: Build da imagem
+        if: always()
+        run: docker build -t oficina-api:ci .
+      - name: Trivy - imagem Docker
+        if: always()
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: oficina-api:ci
+          severity: HIGH,CRITICAL
+          format: table
+          output: trivy-image.txt
+          exit-code: '1'
+          ignore-unfixed: true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: relatorios-seguranca
+          path: |
+            trivy-fs.txt
+            trivy-image.txt
+            docs/seguranca/relatorio-vulnerabilidades.md

@@ -2,7 +2,7 @@
 
 Este documento é a versão em texto do **board de Event Storming no FigJam**. Cada bloco colorido abaixo corresponde a um post-it. Os três fluxos pedidos no Tech Challenge estão aqui na ordem da linha do tempo, da esquerda para a direita, e **foram levantados a partir do código entregue**: todo evento, comando, política e read model tem um arquivo correspondente, indicado nas tabelas.
 
-> **Board no FigJam:** <https://www.figma.com/board/OSi3ythINp208qJgHLLyOh>. Ele tem a legenda, os 3 fluxos em post-its e os diagramas. Exportação em PDF: [event-storming.pdf](event-storming.pdf)
+> **Board no FigJam:** <https://www.figma.com/board/OSi3ythINp208qJgHLLyOh>. Ele tem a legenda, os 3 fluxos em post-its e os diagramas. Exportações em PDF: [event-storming.pdf](event-storming.pdf) (legenda e 3 fluxos), [diagramas.pdf](diagramas.pdf) e [board-completo.pdf](board-completo.pdf) (o quadro inteiro)
 
 ---
 
@@ -28,7 +28,7 @@ Este documento é a versão em texto do **board de Event Storming no FigJam**. C
 2. **Cada coluna é a "receita" de um passo**, de cima para baixo: Ator 🟡 → Read model 🟩 → Comando 🟦 → Agregado 🟨 → **Evento 🟧** → Política 🟪 → Sistema externo 🩷.
 3. **Hotspots 🟥** ficam embaixo da coluna a que se referem.
 4. **À direita, os diagramas:** mapa de contextos, agregados, máquina de estados, sequência da aprovação, modelo de dados e camadas (veja [diagramas.md](diagramas.md)).
-5. Para exportar: selecione as seções e use *⋯ → Export → PDF*, salvando como `docs/ddd/event-storming.pdf` (fluxos) e `docs/ddd/diagramas.pdf` (diagramas).
+5. Exports já gerados em `docs/ddd/`: `event-storming.pdf` (fluxos), `diagramas.pdf` (6 diagramas, um por página), `diagramas/0N-*.pdf` (cada diagrama avulso) e `board-completo.pdf`. Para regerar depois de editar o board: selecione as seções e use *⋯ → Export → PDF*.
 
 ```mermaid
 flowchart LR

@@ -6,6 +6,7 @@
 | | |
 |---|---|
 | **Documentação DDD (FigJam)** | <https://www.figma.com/board/OSi3ythINp208qJgHLLyOh> |
+| **Exports do board (PDF)** | [board completo](docs/ddd/board-completo.pdf) · [Event Storming](docs/ddd/event-storming.pdf) · [diagramas](docs/ddd/diagramas.pdf) |
 | **Vídeo da entrega (YouTube)** | _`<inserir link do vídeo>`_ |
 | **Event Storming** (3 fluxos) | [docs/ddd/event-storming.md](docs/ddd/event-storming.md) |
 | **Diagramas DDD** | [docs/ddd/diagramas.md](docs/ddd/diagramas.md) |
@@ -243,7 +244,9 @@ O seed cria um administrador **para demonstração**, com credenciais configurá
 │   ├── fakes/                 # dublês em memória para testes unitários
 │   └── e2e/                   # testes de integração (Supertest + PostgreSQL)
 ├── docs/
-│   ├── ddd/                   # event storming, diagramas, linguagem ubíqua (+ exports do FigJam)
+│   ├── ddd/                   # event storming, diagramas, linguagem ubíqua
+│   │   ├── *.pdf              # exports do FigJam: board completo, event storming, diagramas
+│   │   └── diagramas/         # um PDF por diagrama (01 a 06)
 │   ├── qualidade/             # evidência de cobertura
 │   └── seguranca/             # relatório de vulnerabilidades
 ├── .github/workflows/ci.yml   # lint, build, testes, cobertura, audit, Trivy
@@ -267,5 +270,5 @@ A branch `main` é protegida: toda alteração entra por **Pull Request**, com o
 
 ## 14. Links da entrega
 
-- **Documentação DDD (FigJam):** <https://www.figma.com/board/OSi3ythINp208qJgHLLyOh> (exports em `docs/ddd/`)
+- **Documentação DDD (FigJam):** <https://www.figma.com/board/OSi3ythINp208qJgHLLyOh> (PDFs: [board completo](docs/ddd/board-completo.pdf), [Event Storming](docs/ddd/event-storming.pdf), [diagramas](docs/ddd/diagramas.pdf))
 - **Vídeo (YouTube):** _`<inserir link>`_

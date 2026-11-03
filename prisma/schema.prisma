@@ -1,0 +1,207 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- Identidade ----------
+
+enum Role {
+  ADMIN
+  ATENDENTE
+  MECANICO
+}
+
+model Usuario {
+  id           String   @id @db.Uuid
+  nome         String
+  email        String   @unique
+  senhaHash    String   @map("senha_hash")
+  role         Role
+  ativo        Boolean  @default(true)
+  criadoEm     DateTime @default(now()) @map("criado_em")
+  atualizadoEm DateTime @updatedAt @map("atualizado_em")
+
+  @@map("usuarios")
+}
+
+// ---------- Cadastro ----------
+
+enum TipoDocumento {
+  CPF
+  CNPJ
+}
+
+model Cliente {
+  id            String        @id @db.Uuid
+  nome          String
+  documento     String        @unique
+  tipoDocumento TipoDocumento @map("tipo_documento")
+  email         String?
+  telefone      String?
+  criadoEm      DateTime      @default(now()) @map("criado_em")
+  atualizadoEm  DateTime      @updatedAt @map("atualizado_em")
+
+  veiculos Veiculo[]
+  ordens   OrdemServico[]
+
+  @@map("clientes")
+}
+
+model Veiculo {
+  id           String   @id @db.Uuid
+  clienteId    String   @map("cliente_id") @db.Uuid
+  placa        String   @unique
+  marca        String
+  modelo       String
+  ano          Int
+  criadoEm     DateTime @default(now()) @map("criado_em")
+  atualizadoEm DateTime @updatedAt @map("atualizado_em")
+
+  cliente Cliente        @relation(fields: [clienteId], references: [id], onDelete: Restrict)
+  ordens  OrdemServico[]
+
+  @@index([clienteId])
+  @@map("veiculos")
+}
+
+// ---------- Catálogo ----------
+
+model Servico {
+  id                   String   @id @db.Uuid
+  nome                 String   @unique
+  descricao            String?
+  precoCentavos        Int      @map("preco_centavos")
+  tempoEstimadoMinutos Int?     @map("tempo_estimado_minutos")
+  ativo                Boolean  @default(true)
+  criadoEm             DateTime @default(now()) @map("criado_em")
+  atualizadoEm         DateTime @updatedAt @map("atualizado_em")
+
+  @@map("servicos")
+}
+
+// ---------- Estoque ----------
+
+enum TipoPeca {
+  PECA
+  INSUMO
+}
+
+enum TipoMovimentacao {
+  ENTRADA
+  SAIDA
+}
+
+model Peca {
+  id                String   @id @db.Uuid
+  codigo            String   @unique
+  nome              String
+  tipo              TipoPeca
+  unidade           String
+  precoCentavos     Int      @map("preco_centavos")
+  quantidadeEstoque Int      @map("quantidade_estoque")
+  estoqueMinimo     Int      @default(0) @map("estoque_minimo")
+  criadoEm          DateTime @default(now()) @map("criado_em")
+  atualizadoEm      DateTime @updatedAt @map("atualizado_em")
+
+  movimentacoes MovimentacaoEstoque[]
+
+  @@map("pecas")
+}
+
+model MovimentacaoEstoque {
+  id             String           @id @db.Uuid
+  pecaId         String           @map("peca_id") @db.Uuid
+  tipo           TipoMovimentacao
+  quantidade     Int
+  motivo         String
+  ordemServicoId String?          @map("ordem_servico_id") @db.Uuid
+  criadoEm       DateTime         @default(now()) @map("criado_em")
+
+  peca Peca @relation(fields: [pecaId], references: [id], onDelete: Cascade)
+
+  @@index([pecaId])
+  @@map("movimentacoes_estoque")
+}
+
+// ---------- Atendimento (Ordem de Serviço) ----------
+
+enum StatusOrdemServico {
+  RECEBIDA
+  EM_DIAGNOSTICO
+  AGUARDANDO_APROVACAO
+  EM_EXECUCAO
+  FINALIZADA
+  ENTREGUE
+}
+
+enum StatusOrcamento {
+  PENDENTE
+  APROVADO
+  REJEITADO
+}
+
+enum TipoItemOrdemServico {
+  SERVICO
+  PECA
+}
+
+model OrdemServico {
+  id                             String              @id @db.Uuid
+  codigo                         String              @unique
+  clienteId                      String              @map("cliente_id") @db.Uuid
+  veiculoId                      String              @map("veiculo_id") @db.Uuid
+  status                         StatusOrdemServico
+  observacao                     String?
+  orcamentoStatus                StatusOrcamento?    @map("orcamento_status")
+  orcamentoValorServicosCentavos Int?                @map("orcamento_valor_servicos_centavos")
+  orcamentoValorPecasCentavos    Int?                @map("orcamento_valor_pecas_centavos")
+  orcamentoEnviadoEm             DateTime?           @map("orcamento_enviado_em")
+  orcamentoRespondidoEm          DateTime?           @map("orcamento_respondido_em")
+  inicioExecucao                 DateTime?           @map("inicio_execucao")
+  fimExecucao                    DateTime?           @map("fim_execucao")
+  entregueEm                     DateTime?           @map("entregue_em")
+  criadaEm                       DateTime            @map("criada_em")
+  atualizadaEm                   DateTime            @updatedAt @map("atualizada_em")
+
+  cliente   Cliente                       @relation(fields: [clienteId], references: [id], onDelete: Restrict)
+  veiculo   Veiculo                       @relation(fields: [veiculoId], references: [id], onDelete: Restrict)
+  itens     ItemOrdemServico[]
+  historico HistoricoStatusOrdemServico[]
+
+  @@index([status])
+  @@index([clienteId])
+  @@map("ordens_servico")
+}
+
+model ItemOrdemServico {
+  id                    String               @id @db.Uuid
+  ordemServicoId        String               @map("ordem_servico_id") @db.Uuid
+  tipo                  TipoItemOrdemServico
+  referenciaId          String               @map("referencia_id") @db.Uuid
+  descricao             String
+  quantidade            Int
+  precoUnitarioCentavos Int                  @map("preco_unitario_centavos")
+
+  ordemServico OrdemServico @relation(fields: [ordemServicoId], references: [id], onDelete: Cascade)
+
+  @@index([ordemServicoId])
+  @@map("itens_ordem_servico")
+}
+
+model HistoricoStatusOrdemServico {
+  id             String             @id @db.Uuid
+  ordemServicoId String             @map("ordem_servico_id") @db.Uuid
+  sequencia      Int
+  status         StatusOrdemServico
+  observacao     String?
+  ocorridoEm     DateTime           @map("ocorrido_em")
+
+  ordemServico OrdemServico @relation(fields: [ordemServicoId], references: [id], onDelete: Cascade)
+
+  @@unique([ordemServicoId, sequencia])
+  @@map("historico_status_ordem_servico")
+}

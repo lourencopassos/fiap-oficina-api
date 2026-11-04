@@ -59,6 +59,8 @@ jobs:
   seguranca:
     name: Análise de vulnerabilidades
     runs-on: ubuntu-latest
+    env:
+      TRIVY_IMAGE: aquasec/trivy:0.70.0@sha256:be1190afcb28352bfddc4ddeb71470835d16462af68d310f9f4bca710961a41e
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -71,29 +73,32 @@ jobs:
       - name: Relatório npm audit
         if: always()
         run: npm run audit:report
+      # Trivy roda pela imagem oficial fixada por digest. A aquasecurity/trivy-action
+      # depende de um instalador que baixa de get.trivy.dev, domínio que deixou de
+      # resolver (curl exit 6) — a imagem Docker não tem esse ponto de falha.
       - name: Trivy - dependências, segredos e configurações (fs)
-        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
-        with:
-          scan-type: fs
-          scanners: vuln,secret,misconfig
-          severity: HIGH,CRITICAL
-          format: table
-          output: trivy-fs.txt
-          exit-code: '1'
-          ignore-unfixed: true
+        run: |
+          set +e
+          docker run --rm -v "$PWD":/src -v "$HOME/.cache/trivy":/root/.cache/trivy "$TRIVY_IMAGE" \
+            fs --scanners vuln,secret,misconfig --severity HIGH,CRITICAL --ignore-unfixed \
+            --skip-dirs /src/node_modules --exit-code 1 --format table --output /src/trivy-fs.txt /src
+          rc=$?
+          cat trivy-fs.txt
+          exit $rc
       - name: Build da imagem
         if: always()
         run: docker build -t oficina-api:ci .
       - name: Trivy - imagem Docker
         if: always()
-        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
-        with:
-          image-ref: oficina-api:ci
-          severity: HIGH,CRITICAL
-          format: table
-          output: trivy-image.txt
-          exit-code: '1'
-          ignore-unfixed: true
+        run: |
+          set +e
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$PWD":/src \
+            -v "$HOME/.cache/trivy":/root/.cache/trivy "$TRIVY_IMAGE" \
+            image --severity HIGH,CRITICAL --ignore-unfixed \
+            --exit-code 1 --format table --output /src/trivy-image.txt oficina-api:ci
+          rc=$?
+          cat trivy-image.txt
+          exit $rc
       - uses: actions/upload-artifact@v4
         if: always()
         with:

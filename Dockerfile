@@ -21,7 +21,12 @@ RUN npm ci --omit=dev && npx prisma generate && npm cache clean --force
 
 # ---------- runtime: imagem final enxuta, usuário não-root ----------
 FROM node:22-alpine AS runtime
-RUN apk add --no-cache openssl
+# apk upgrade: aplica correções de segurança do Alpine (musl, zlib...) publicadas após a imagem base.
+# npm/npx/corepack removidos: a imagem só executa `node` (ver docker-entrypoint.sh), e o npm CLI
+# embutido na imagem base carrega dependências próprias com CVEs (tar, sigstore, pacote...).
+RUN apk upgrade --no-cache && apk add --no-cache openssl \
+ && rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack \
+           /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack
 ENV NODE_ENV=production \
     PORT=3000
 WORKDIR /app
